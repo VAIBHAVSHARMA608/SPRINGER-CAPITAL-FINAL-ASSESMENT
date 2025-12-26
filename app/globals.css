@@ -1,21 +1,16 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --foreground: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #ffffff;
   }
 }
 
@@ -23,4 +18,51 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+
+/* Chart tooltip */
+.chart-tooltip {
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+  background: rgba(252, 235, 235, 0.8);
+  color: #6f2929;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+/* Container utility fallback if Tailwind isn't applied */
+.container {
+  max-width: 1100px;
+}
+
+/* Links and headings for better visibility */
+a {
+  color: #000000;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+/* Ensure form controls have high-contrast text */
+input, select, textarea, button {
+  color: var(--foreground);
+}
+
+/* Override some Tailwind gray utility classes that may make text too light */
+.text-gray-600, .text-gray-400, .text-gray-300, .text-gray-200 {
+  color: var(--foreground) !important;
+}
+
+/* Ensure muted text still has readable contrast */
+.muted, .text-muted {
+  color: rgba(0,0,0,0.75) !important;
 }
