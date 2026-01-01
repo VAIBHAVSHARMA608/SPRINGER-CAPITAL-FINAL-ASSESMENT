@@ -19,6 +19,7 @@ export default function Chart({ data, title, type }: ChartProps) {
   const innerWidth = svgWidth - margin.left - margin.right;
   const innerHeight = svgHeight - margin.top - margin.bottom;
   const max = getMax(data);
+
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string } | null>(null);
@@ -34,14 +35,12 @@ export default function Chart({ data, title, type }: ChartProps) {
     if (!rect) return;
     setTooltip({ x: e.clientX - rect.left + 8, y: e.clientY - rect.top + 8, label });
   }
-
   function hideTooltip() {
     setTooltip(null);
   }
 
   return (
-    <div ref={containerRef} className="bg-white p-4 rounded-lg shadow-lg w-full h-80 relative">
-      <h2 className="text-xl font-semibold mb-2">{title}</h2>
+    <div ref={containerRef} className="bg-card p-4 rounded-lg shadow-lg w-full h-80 relative transition-colors duration-300">
       <h2 className="text-xl font-semibold text-foreground mb-2">{title}</h2>
 
       <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-[85%]">
