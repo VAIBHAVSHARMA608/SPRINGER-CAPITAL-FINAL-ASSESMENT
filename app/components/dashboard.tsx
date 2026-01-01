@@ -42,10 +42,14 @@ function parseCSV(text: string): CsvRow[] {
   const rows = lines.slice(1).map((ln) => {
     const cols = splitCSVLine(ln);
     const model = cols[0] || '';
-    const monthly = cols.slice(1, 13).map((c) => Number(c || 0));
-    const sum = Number(cols[13] || 0);
+    function safeNum(v: string | undefined, fallback = 0) {
+      const n = Number(v ?? fallback);
+      return Number.isFinite(n) ? n : fallback;
+    }
+    const monthly = cols.slice(1, 13).map((c) => safeNum(c, 0));
+    const sum = safeNum(cols[13], 0);
     const category = cols[14] || '';
-    const year = Number(cols[15] || 0);
+    const year = safeNum(cols[15], 0);
     return { model, monthly, sum, category, year } as CsvRow;
   });
   return rows;
@@ -57,6 +61,7 @@ export default function Dashboard() {
   const [year, setYear] = useState<number>(2021);
   const [modelFilter, setModelFilter] = useState<string>("");
   const [minSum, setMinSum] = useState<number>(0);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
     fetch('/Canadasalesdata.csv')
@@ -65,7 +70,34 @@ export default function Dashboard() {
       .catch(() => setCsvRows([]));
   }, []);
 
+  // initialize theme from localStorage or system preference
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light' || saved === 'dark') {
+        setTheme(saved);
+        return;
+      }
+    } catch (e) {
+      // ignore
+    }
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+    } catch (e) {
+      // ignore
+    }
+  }, [theme]);
+
   const years = useMemo(() => Array.from(new Set(csvRows.map((r) => r.year))).sort((a, b) => b - a), [csvRows]);
+  // filter out invalid/non-finite year values to avoid passing NaN to option `value`
+  const validYears = useMemo(() => years.filter((y) => Number.isFinite(y)), [years]);
 
   const filteredRows = useMemo(() => {
     return csvRows.filter((r) =>
@@ -119,11 +151,16 @@ export default function Dashboard() {
             <label className="font-semibold text-foreground">Year</label>
             <select
               value={year}
-              onChange={(e) => setYear(Number(e.target.value))}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                if (Number.isFinite(v)) setYear(v);
+              }}
               className="px-3 py-2 border rounded text-foreground bg-background"
             >
-              {years.length
-                ? years.map(y => <option key={y} value={y}>{y}</option>)
+              {validYears.length
+                ? validYears.map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))
                 : <option value={2021}>2021</option>}
             </select>
 
@@ -150,6 +187,12 @@ export default function Dashboard() {
                 Line
               </button>
             </div>
+            <button
+              onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+              className="px-3 py-2 ml-2 border rounded text-foreground bg-background"
+            >
+              {theme === 'dark' ? 'Light' : 'Dark'}
+            </button>
           </div>
 
           <div className="flex gap-3 items-center">

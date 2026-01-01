@@ -15,11 +15,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-   --background: #000000;
---foreground: #ffffff;
-
-  }           
+  :root:not([data-theme]) {
+    --background: #000000;
+    --foreground: #ffffff;
+  }
 }
 
 body {
@@ -27,3 +26,18 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Explicit theme override when set on the document element */
+[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #000000;
+}
+
+[data-theme="dark"] {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+/* Small helper utilities used by components */
+.bg-background { background-color: var(--background) !important; }
+.text-foreground { color: var(--foreground) !important; }
