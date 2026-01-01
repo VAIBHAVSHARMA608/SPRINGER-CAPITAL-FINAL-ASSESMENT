@@ -69,3 +69,5 @@ export const salesData: SalesRecord[] = [
     sumOfSales: 2248, category: "MLS"
   },
   
+];
+
