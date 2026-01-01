@@ -42,8 +42,10 @@ export default function Chart({ data, title, type }: ChartProps) {
   return (
     <div ref={containerRef} className="bg-white p-4 rounded-lg shadow-lg w-full h-80 relative">
       <h2 className="text-xl font-semibold mb-2">{title}</h2>
+      <h2 className="text-xl font-semibold text-foreground mb-2">{title}</h2>
+
       <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-[85%]">
-        {/* Grid lines */}
+        {/* Gridlines */}
         {[0, 0.25, 0.5, 0.75, 1].map((t, i) => (
           <line
             key={i}
@@ -51,7 +53,7 @@ export default function Chart({ data, title, type }: ChartProps) {
             x2={svgWidth - margin.right}
             y1={margin.top + innerHeight * (1 - t)}
             y2={margin.top + innerHeight * (1 - t)}
-            stroke="#e6e6e6"
+            stroke="var(--color-muted)"
             strokeWidth={1}
           />
         ))}
@@ -64,7 +66,7 @@ export default function Chart({ data, title, type }: ChartProps) {
             y={margin.top + innerHeight * (1 - t) + 4}
             fontSize={10}
             textAnchor="end"
-            fill="#6b7280"
+            fill="var(--color-muted)"
           >
             {Math.round(max * t)}
           </text>
@@ -72,7 +74,14 @@ export default function Chart({ data, title, type }: ChartProps) {
 
         {/* X axis labels */}
         {points.map((p) => (
-          <text key={p.month} x={p.x} y={svgHeight - 6} fontSize={10} textAnchor="middle" fill="#6b7280">
+          <text
+            key={p.month}
+            x={p.x}
+            y={svgHeight - 6}
+            fontSize={10}
+            textAnchor="middle"
+            fill="var(--color-muted)"
+          >
             {p.month}
           </text>
         ))}
@@ -90,7 +99,7 @@ export default function Chart({ data, title, type }: ChartProps) {
                 y={p.y}
                 width={barWidth}
                 height={height}
-                fill="#4f46e5"
+                className="fill-indigo-400 dark:fill-indigo-500"
                 rx={4}
                 onMouseMove={(e) => showTooltip(e, `${p.month}: ${p.sales}`)}
                 onMouseLeave={hideTooltip}
@@ -100,14 +109,19 @@ export default function Chart({ data, title, type }: ChartProps) {
 
         {type === "line" && (
           <>
-            <polyline fill="none" stroke="#4f46e5" strokeWidth={2} points={points.map((p) => `${p.x},${p.y}`).join(" ")} />
+            <polyline
+              fill="none"
+              className="stroke-indigo-400 dark:stroke-indigo-500"
+              strokeWidth={2}
+              points={points.map((p) => `${p.x},${p.y}`).join(" ")}
+            />
             {points.map((p) => (
               <circle
                 key={p.month}
                 cx={p.x}
                 cy={p.y}
                 r={3}
-                fill="#4f46e5"
+                className="fill-indigo-400 dark:fill-indigo-500"
                 onMouseMove={(e) => showTooltip(e, `${p.month}: ${p.sales}`)}
                 onMouseLeave={hideTooltip}
               />
@@ -121,13 +135,17 @@ export default function Chart({ data, title, type }: ChartProps) {
           x2={svgWidth - margin.right}
           y1={svgHeight - margin.bottom}
           y2={svgHeight - margin.bottom}
-          stroke="#111827"
+          stroke="var(--color-foreground)"
           strokeWidth={1}
         />
       </svg>
 
       {tooltip && (
-        <div ref={tooltipRef} className="chart-tooltip p-2 text-sm bg-gray-900 text-white rounded shadow-lg pointer-events-none absolute z-50" style={{ left: tooltip.x, top: tooltip.y }}>
+        <div
+          ref={tooltipRef}
+          className="chart-tooltip p-2 text-sm bg-foreground text-background rounded shadow-lg pointer-events-none absolute z-50"
+          style={{ left: tooltip.x, top: tooltip.y }}
+        >
           {tooltip.label}
         </div>
       )}
