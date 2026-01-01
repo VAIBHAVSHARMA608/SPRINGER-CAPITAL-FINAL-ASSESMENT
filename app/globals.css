@@ -2,9 +2,13 @@
 
 :root {
  --background: #ffffff;
---foreground: #000000;
   --font-geist-sans: 'Geist Sans', sans-serif;
   --font-geist-mono: 'Geist Mono', monospace;
+  /* chart and UI mappings */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: rgba(0,0,0,0.6);
+  --card-bg: #ffffff;
 }
 
 @theme inline {
@@ -36,8 +40,16 @@ body {
 [data-theme="dark"] {
   --background: #000000;
   --foreground: #ffffff;
+  --color-muted: rgba(255,255,255,0.6);
+  --card-bg: #071025;
 }
 
 /* Small helper utilities used by components */
 .bg-background { background-color: var(--background) !important; }
 .text-foreground { color: var(--foreground) !important; }
+
+/* Card background helper used by chart container */
+.bg-card { background-color: var(--card-bg) !important; }
+
+/* tooltip colors (invert for dark) */
+.chart-tooltip { background-color: var(--foreground); color: var(--background); }
